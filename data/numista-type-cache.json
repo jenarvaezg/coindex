@@ -6719,6 +6719,105 @@
   "category": "coin",
   "type": "Monedas circulantes conmemorativas"
  },
+ "122121": {
+  "id": 122121,
+  "url": "https://es.numista.com/122121",
+  "title": "50 Francs (Gorilla)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2008,
+  "max_year": 2008,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6347cb964168e0.56651777-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6347cb964168e0.56651777-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "reverse": {
+   "description": "Familia de gorilas de montaña (Gorilla beringei beringei) abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE 2012\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6347cb968bc850.84201094-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6347cb968bc850.84201094-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Gorila de montaña",
+  "comments": "<a href=\"https://en.numista.com/catalogue/images/5d29a0632b6f8.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5d29a0632b6f8.jpg\" alt=\"\" width=\"200\" height=\"100\" /></a><br /><br />\r\nVariante parcialmente dorada.",
+  "tags": [
+   "Primate",
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "46"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "123775": {
   "id": 123775,
   "url": "https://es.numista.com/123775",
@@ -12703,6 +12802,101 @@
   },
   "category": "coin",
   "type": "Monedas circulantes conmemorativas"
+ },
+ "133315": {
+  "id": 133315,
+  "url": "https://es.numista.com/133315",
+  "title": "50 Francs (Giraffe)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2018,
+  "max_year": 2018,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/267-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/267-180.jpg",
+   "picture_copyright": "Rojomano"
+  },
+  "reverse": {
+   "description": "Jirafa y cría abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE \r\n2018\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/268-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/268-180.jpg",
+   "picture_copyright": "Rojomano"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Jirafa",
+  "tags": [
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "171"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "13333": {
   "id": 13333,
@@ -19725,6 +19919,106 @@
   ],
   "category": "coin",
   "type": "Monedas circulantes conmemorativas"
+ },
+ "156216": {
+  "id": 156216,
+  "url": "https://es.numista.com/156216",
+  "title": "50 Francs (Shoebill)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2019,
+  "max_year": 2019,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/274-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/274-180.jpg",
+   "picture_copyright": "John Hartley",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "reverse": {
+   "description": "Picozapato (Balaeniceps rex) y polluelo en el nido, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE \r\n2019\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/275-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/275-180.jpg",
+   "picture_copyright": "John Hartley",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Shoebill",
+  "tags": [
+   "Ave",
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "181"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "157350": {
   "id": 157350,
@@ -29854,6 +30148,106 @@
    "text": "5 ECU"
   },
   "weight": 33.62
+ },
+ "191383": {
+  "id": 191383,
+  "url": "https://es.numista.com/191383",
+  "title": "50 Francs (Galago)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2020,
+  "max_year": 2020,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/5e10866d4babd5.07061758-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/5e10866d4babd5.07061758-180.jpg",
+   "picture_copyright": "John Hartley",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "reverse": {
+   "description": "Galago adulto y joven sobre una rama, abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE \r\n2020\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/5e10866ebd3db3.75401253-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/5e10866ebd3db3.75401253-180.jpg",
+   "picture_copyright": "John Hartley",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Galago",
+  "tags": [
+   "Primate",
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "198"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "191855": {
   "category": "coin",
@@ -41689,6 +42083,103 @@
    {
     "id": 12,
     "name": "United States Mint of San Francisco"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "259262": {
+  "id": 259262,
+  "url": "https://es.numista.com/259262",
+  "title": "50 Francs (Okapi)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2021,
+  "max_year": 2021,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/5fe85833bd8293.89577464-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/5fe85833bd8293.89577464-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "reverse": {
+   "description": "Okapi (Okapia johnstoni) y cría abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE \r\n 2021\r\n 1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/5fe858342bdf20.64532280-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/5fe858342bdf20.64532280-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Okapi",
+  "tags": [
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "214"
+   }
+  ],
+  "weight": 31.135,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
    }
   ],
   "category": "coin",
@@ -54387,6 +54878,100 @@
   },
   "weight": 62.42
  },
+ "29982": {
+  "id": 29982,
+  "url": "https://es.numista.com/29982",
+  "title": "50 Francs (Rhinoceros)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2012,
+  "max_year": 2012,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/81-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/81-180.jpg",
+   "picture_copyright": "Eric25290"
+  },
+  "reverse": {
+   "description": "Rinoceronte negro (Diceros bicornis) con cría abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE  2012\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/80-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/80-180.jpg",
+   "picture_copyright": "Eric25290"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Rinoceronte negro",
+  "tags": [
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "37"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "30": {
   "category": "coin",
   "commemorated_topic": "230 aniversario del nacimiento de La Fayette",
@@ -60857,6 +61442,105 @@
   },
   "weight": 31.1035
  },
+ "326138": {
+  "id": 326138,
+  "url": "https://es.numista.com/326138",
+  "title": "50 Francs (Pelican)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2022,
+  "max_year": 2022,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6266fdfa470475.57237262-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6266fdfa470475.57237262-180.jpg",
+   "picture_copyright": "John Hartley",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "reverse": {
+   "description": "Dos pelícanos (Pelecanus sp.) abajo a la izquierda, contorno del continente africano a la derecha.",
+   "lettering": "AFRICAN OUNCE\r\n2022\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6266fdfb47d241.06050842-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6266fdfb47d241.06050842-180.jpg",
+   "picture_copyright": "John Hartley",
+   "picture_license_name": "CC0",
+   "picture_license_url": "https://creativecommons.org/publicdomain/zero/1.0/deed.es"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Fauna africana",
+  "tags": [
+   "Ave",
+   "Mapa",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "223"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "329467": {
   "id": 329467,
   "url": "https://es.numista.com/329467",
@@ -64749,6 +65433,102 @@
    "text": "2 Roubles"
   },
   "weight": 15.87
+ },
+ "349053": {
+  "id": 349053,
+  "url": "https://es.numista.com/349053",
+  "title": "50 Francs (Crocodile)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2023,
+  "max_year": 2023,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/63e9141fd511e3.56608022-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/63e9141fd511e3.56608022-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "reverse": {
+   "description": "Dos cocodrilos del Nilo (Crocodylus niloticus) abajo a la izquierda, contorno del continente africano a la derecha.",
+   "lettering": "AFRICAN OUNCE\r\n2023\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/63e9142026ebf8.77464435-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/63e9142026ebf8.77464435-180.jpg",
+   "picture_copyright": "In the World of Coins",
+   "picture_copyright_url": "http://www.mycoinsworld.com"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Cocodrilo del Nilo",
+  "tags": [
+   "Otro animal",
+   "Reptil"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "230"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "349619": {
   "id": 349619,
@@ -77308,6 +78088,97 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "429532": {
+  "id": 429532,
+  "url": "https://es.numista.com/429532",
+  "title": "50 Francs (Leopard)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "issuing_entity": {
+   "id": 938,
+   "name": "Banco Nacional de Ruanda",
+   "wikidata_id": "Q4314980"
+  },
+  "min_year": 2024,
+  "max_year": 2024,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas en el centro, con el nombre del emisor encima y el valor debajo.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/66c41b9427a3f7.31236322-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/66c41b9427a3f7.31236322-180.jpg",
+   "picture_copyright": "Don pep"
+  },
+  "reverse": {
+   "description": "Leopardo con dos cachorros abajo a la izquierda, mapa de África arriba",
+   "lettering": "AFRICAN OUNCE 2024\r\n1 oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/66c41b952aa621.09075488-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/66c41b952aa621.09075488-180.jpg",
+   "picture_copyright": "Don pep"
+  },
+  "series": "African Ounce",
+  "comments": "<p><a href=\"https://en.numista.com/catalogue/images/66d31d1f8e165.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/66d31d1f8e165.jpg\"></a><a href=\"https://en.numista.com/catalogue/images/66d31d36cda15.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/66d31d36cda15.jpg\"></a></p>",
+  "tags": [
+   "Gato o felino",
+   "Mapa",
+   "Escudo de armas"
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "42955": {
   "id": 42955,
   "url": "https://es.numista.com/42955",
@@ -79001,6 +79872,103 @@
    "text": "2 libras"
   },
   "weight": 31.21
+ },
+ "43994": {
+  "id": 43994,
+  "url": "https://es.numista.com/43994",
+  "title": "50 Francs (Cheetah)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2013,
+  "max_year": 2013,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/97-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/97-180.jpg",
+   "picture_copyright": "Sanjuro2020"
+  },
+  "reverse": {
+   "description": "Dos cheetas (Acinonyx jubatus) de frente, abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE 2013\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/96-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/96-180.jpg",
+   "picture_copyright": "Sanjuro2020"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Animales africanos",
+  "comments": "<a href=\"https://en.numista.com/catalogue/images/5fe8603d9601a.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5fe8603d9601a.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br /><br />\r\nVariante con marca privada - f15.",
+  "tags": [
+   "Gato o felino",
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "38"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "440308": {
   "id": 440308,
@@ -81596,6 +82564,98 @@
    "text": "1 Dollar"
   },
   "weight": 23.33
+ },
+ "453384": {
+  "id": 453384,
+  "url": "https://es.numista.com/453384",
+  "title": "50 Francs (Martial Eagle)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "issuing_entity": {
+   "id": 938,
+   "name": "Banco Nacional de Ruanda",
+   "wikidata_id": "Q4314980"
+  },
+  "min_year": 2025,
+  "max_year": 2025,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda, el emblema nacional consiste en una cesta tejida tradicional en el centro con un sol estilizado encima. Inmediatamente lo flanquean ramas de café y sorgo, con escudos de guerreros indígenas a ambos lados de estos elementos.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/67a11759342145.87637705-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/67a11759342145.87637705-180.jpg",
+   "picture_copyright": "Don pep"
+  },
+  "reverse": {
+   "description": "Contorno geográfico del continente africano. En el campo inferior izquierdo, un águila marcial posada en una rama con una cría en el nido.",
+   "lettering": "AFRICAN OUNCE 2025\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/67a1175a0accf0.86816362-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/67a1175a0accf0.86816362-180.jpg",
+   "picture_copyright": "Don pep"
+  },
+  "series": "African Ounce",
+  "comments": "<p style=\"margin-left:0px;\">La codiciada serie de onzas africanas emitidas en nombre de la República de Ruanda continúa su larga racha de nuevos diseños con el lanzamiento del Águila Marcial 2025. Este bello ejemplar continúa con algunas de las señas de identidad de la serie, al tiempo que presenta otra nueva criatura del continente africano.</p><p style=\"margin-left:0px;\"></p><p style=\"margin-left:0px;\">El águila marcial es una de las rapaces más poderosas e impresionantes de África, famosa por su enorme tamaño y su extraordinaria capacidad de caza. Presente en varias regiones del África subsahariana, esta magnífica ave puede alcanzar una envergadura de hasta 2,5 metros, lo que la convierte en una de las águilas más grandes del mundo.</p><p style=\"margin-left:0px;\"></p><p style=\"margin-left:0px;\">Fuente: <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://www.jmbullion.com/2025-1-oz-rwanda-silver-african-ounce-martial-eagle-coin/\"><u><a href=\"https://www.jmbullion.com/2025-1-oz-rwanda-silver-african-ounce-martial-eagle-coin/\" rel=\"ugc noopener\" target=\"_blank\" >https://www.jmbullion.com/2025-1-oz-rwanda-silver-african-ounce-martial-eagle-coin/</a></u></a></p>",
+  "tags": [
+   "Ave",
+   "Águila",
+   "Sol"
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "45372": {
   "id": 45372,
@@ -87459,6 +88519,104 @@
   ],
   "category": "coin",
   "type": "Monedas circulantes normales"
+ },
+ "45678": {
+  "id": 45678,
+  "url": "https://es.numista.com/45678",
+  "title": "50 Francs (Elephant)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2009,
+  "max_year": 2009,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/65389a7b0cf8a9.52296012-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/65389a7b0cf8a9.52296012-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "reverse": {
+   "description": "Tres elefantes africanos (Loxodonta africana) abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE 2009\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/65389a7b80e275.54527822-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/65389a7b80e275.54527822-180.jpg",
+   "picture_copyright": "Coinsberg",
+   "picture_copyright_url": "https://www.coinsberg.com/"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Elefante africano",
+  "tags": [
+   "Elefante",
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "55"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "457": {
   "category": "coin",
@@ -99062,6 +100220,96 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "551533": {
+  "id": 551533,
+  "url": "https://es.numista.com/551533",
+  "title": "50 Francs (Hyena)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "issuing_entity": {
+   "id": 938,
+   "name": "Banco Nacional de Ruanda",
+   "wikidata_id": "Q4314980"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda, el emblema nacional consiste en una cesta tejida tradicional en el centro con un sol estilizado encima. Inmediatamente lo flanquean ramas de café y sorgo, con escudos de guerreros indígenas a ambos lados de estos elementos.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6960dbd7842354.57649965-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6960dbd7842354.57649965-180.jpg",
+   "picture_copyright": "alipiec"
+  },
+  "reverse": {
+   "description": "Contorno geográfico del continente africano. En el campo inferior izquierdo se representa una pareja de hienas con su cría.",
+   "lettering": "AFRICAN OUNCE 2026\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6960dbd801d146.14661658-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6960dbd801d146.14661658-180.jpg",
+   "picture_copyright": "alipiec"
+  },
+  "series": "African Ounce",
+  "comments": "<p>La Rwandan Wildlife Series es una de las colecciones más antiguas disponibles para los compradores de monedas de plata. Introducida en 2008 por la BH Mayer Mint de Alemania, esta colección ha presentado nuevos animales del continente africano cada año. Desde el gorila de espalda plateada de la primera emisión hasta la última, la hiena manchada de 2026, esta colección ha recorrido el continente para mostrar la fauna autóctona.</p><p></p><p>Fuente: <a target=\"_blank\" rel=\"noopener noreferrer ugc\" href=\"https://www.jmbullion.com/2026-1-oz-rwanda-silver-african-ounce-spotted-hyena-coin/\">2026 1 oz Rwanda Silver Ounce Spotted Hyena Coin l JM Bullion™</a></p>",
+  "tags": [
+   "Sol"
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "55164": {
   "id": 55164,
   "url": "https://es.numista.com/55164",
@@ -100723,6 +101971,101 @@
    {
     "id": 16,
     "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "56264": {
+  "id": 56264,
+  "url": "https://es.numista.com/56264",
+  "title": "50 Francs (Impala)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2014,
+  "max_year": 2014,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/118-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/118-180.jpg",
+   "picture_copyright": "Sanjuro2020"
+  },
+  "reverse": {
+   "description": "Dos impalas (Aepyceros melampus) mirando a la izquierda, abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE 2014\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/119-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/119-180.jpg",
+   "picture_copyright": "Sanjuro2020"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Impala",
+  "tags": [
+   "Ciervo o cérvido",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "43"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
    }
   ],
   "category": "coin",
@@ -117708,6 +119051,101 @@
   "category": "coin",
   "type": "Monedas circulantes conmemorativas"
  },
+ "69466": {
+  "id": 69466,
+  "url": "https://es.numista.com/69466",
+  "title": "50 Francs (Cape buffalo)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2015,
+  "max_year": 2015,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/152-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/152-180.jpg",
+   "picture_copyright": "gegeone"
+  },
+  "reverse": {
+   "description": "Búfalo del Cabo (Syncerus caffer caffer) y cría abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE \r\n2015 \r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/153-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/153-180.jpg",
+   "picture_copyright": "gegeone"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Búfalo del Cabo",
+  "comments": "<a href=\"https://en.numista.com/catalogue/images/5fe85d14a93c9.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/5fe85d14a93c9.jpg\" alt=\"\" width=\"200\" height=\"200\" /></a><br />\r\nVariante con marca privada - f15.",
+  "tags": [
+   "Vaca o bovino",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "44"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "69507": {
   "category": "coin",
   "commemorated_topic": "Proclamación de Felipe VI",
@@ -123597,6 +125035,99 @@
    "picture_license_name": "CC BY-NC-SA",
    "picture_license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es"
   },
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
+ "71519": {
+  "id": 71519,
+  "url": "https://es.numista.com/71519",
+  "title": "50 Francs (Zebra)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2011,
+  "max_year": 2011,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/160-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/160-180.jpg"
+  },
+  "reverse": {
+   "description": "Dos cebras abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE 2011\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/161-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/161-180.jpg"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Cebra",
+  "comments": "<a href=\"https://en.numista.com/catalogue/images/6555ca05906b4.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/6555ca05906b4.jpg\" alt=\"\" width=\"200\" height=\"198\" /></a><br />\r\nVariante con marca privada - f15.",
+  "tags": [
+   "Caballo o equino",
+   "Escudo de armas"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "39"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
   "category": "coin",
   "type": "Monedas no circulantes"
  },
@@ -131741,6 +133272,100 @@
   },
   "weight": 18
  },
+ "76513": {
+  "id": 76513,
+  "url": "https://es.numista.com/76513",
+  "title": "50 Francs (Lion)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2010,
+  "max_year": 2010,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/158-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/158-180.jpg"
+  },
+  "reverse": {
+   "description": "Familia de tres leones africanos (Panthera leo) abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE 2010\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/159-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/159-180.jpg"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "León africano",
+  "comments": "<a href=\"https://en.numista.com/catalogue/images/62dad9f5e2a18.jpg\"><img src=\"https://en.numista.com/catalogue/images/miniatures/62dad9f5e2a18.jpg\" alt=\"\" width=\"200\" height=\"198\" /></a><br />\r\nCon Privy Mark - f15.",
+  "tags": [
+   "Gato o felino",
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "70"
+   }
+  ],
+  "weight": 31.135,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "76634": {
   "id": 76634,
   "url": "https://es.numista.com/76634",
@@ -136505,6 +138130,101 @@
    "text": "30 euros"
   },
   "weight": 18
+ },
+ "80038": {
+  "id": 80038,
+  "url": "https://es.numista.com/80038",
+  "title": "50 Francs (Suricate)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2016,
+  "max_year": 2016,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/202-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/202-180.jpg",
+   "picture_copyright": "gegeone"
+  },
+  "reverse": {
+   "description": "Tres suricatas (Suricata suricatta) abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE \r\n2016\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/203-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/203-180.jpg",
+   "picture_copyright": "gegeone"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Suricate",
+  "tags": [
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "159"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "80268": {
   "id": 80268,
@@ -144359,6 +146079,101 @@
    "text": "1 Dollar"
   },
   "weight": 31.1035
+ },
+ "96359": {
+  "id": 96359,
+  "url": "https://es.numista.com/96359",
+  "title": "50 Francs (Hippopotamus)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "min_year": 2017,
+  "max_year": 2017,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 40,
+  "thickness": 3.14,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo de armas de Ruanda.",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWI - UMURIMO - GUKUNDA IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/220-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/220-180.jpg",
+   "picture_copyright": "Rojomano"
+  },
+  "reverse": {
+   "description": "Hipopótamo (Hippopotamus amphibius) y cría abajo a la izquierda, contorno de África a la derecha.",
+   "lettering": "AFRICAN OUNCE \r\n2017\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/221-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/221-180.jpg",
+   "picture_copyright": "Rojomano"
+  },
+  "series": "African Ounce",
+  "commemorated_topic": "Hipopótamo",
+  "tags": [
+   "Escudo de armas",
+   "Mapa"
+  ],
+  "references": [
+   {
+    "catalogue": {
+     "id": 3,
+     "code": "KM"
+    },
+    "number": "165"
+   }
+  ],
+  "weight": 31.1,
+  "orientation": "medal",
+  "edge": {
+   "description": "Reed"
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "97460": {
   "category": "coin",
