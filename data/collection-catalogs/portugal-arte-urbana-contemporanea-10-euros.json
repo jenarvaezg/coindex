@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "portugal-arte-urbana-contemporanea-10-euros",
+  "name": "Arte urbano contemporáneo · Portugal · 10 euros de plata proof",
+  "short_name": "Arte urbano contemporáneo",
+  "issuer_code": "portugal",
+  "family": "Arte urbano contemporáneo",
+  "weight_millioz": 868,
+  "finish": "Proof",
+  "metal": "silver",
+  "series_status": "open",
+  "source": "https://en.numista.com/catalogue/series.php?id=2766",
+  "source_note": "Serie de la Imprensa Nacional-Casa da Moeda, una moneda por artista: 10 euros de plata .925 y 40 mm, sólo en proof. La tienda de la INCM presenta el Bordalo II de diciembre de 2023 como «The third coin in the \"Urban Contemporary Art\" series» y no dice que sea la última, así que la lámina queda abierta. En 2024 y 2025 los 10 euros de plata de la INCM fueron a otras series (50 años de democracia, elecciones libres y artistas plásticos), según los listados por año de Numista leídos el 14 de octubre de 2026. https://loja.incm.pt/en/products/moedas-bordalo-ii-prata-proof-1026001",
+  "updated_at": "2026-10-14",
+  "members": [
+    {
+      "id": "2021-vhils",
+      "label": "Vhils",
+      "year": 2021,
+      "numista_type_id": 311980
+    },
+    {
+      "id": "2022-akacorleone",
+      "label": "Akacorleone",
+      "year": 2022,
+      "numista_type_id": 334727
+    },
+    {
+      "id": "2023-bordalo-ii",
+      "label": "Bordalo II",
+      "year": 2023,
+      "numista_type_id": 390102,
+      "variant_note": "19,3 g y no 27: lleva a cada lado una media luna de polímero reciclado, según la INCM y la ficha. Es la tercera de la serie y la propia ceca la numera así."
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "id": "francia-100-francos-conmemorativos-plata",
+  "name": "100 francos conmemorativos de plata .900 · Francia 1984-1997",
+  "short_name": "100 francos conmemorativos",
+  "issuer_code": "france",
+  "family": "100 francos conmemorativos de plata de Francia",
+  "weight_millioz": 482,
+  "finish": null,
+  "metal": "silver",
+  "printed_side": "obverse",
+  "series_status": "closed",
+  "closed_note": "El Malraux de 1997 es el último. Buscando en Numista todo lo francés de 14,5 a 15,5 g (`catalogue/index.php?cat=y&st=all&e=france&w=14.5-15.5&o=y`, leído el 14 de octubre de 2026) no aparece ningún 100 francos posterior a 1997, y el franco desapareció con el euro en 2002.",
+  "source": "https://en.numista.com/catalogue/pieces27.html",
+  "source_note": "Numista da a cada conmemorativa su propia serie, así que la lista sale de enumerar por peso: una conmemorativa circulante de plata .900 de 15 g y 31 mm al año entre 1984 y 1997, catorce tipos con ids consecutivos (N#27 a N#40). El 100 francos Panthéon (N#11, 1982-2001) es la moneda corriente y no entra. Cada casilla cualifica la tirada de circulación y la BU de los sets, y deja fuera los ensayos de 1.850 piezas, la proof de 1984 y las «Belle Épreuve» de 37 mm y 22,2 g de 1993 y 1997; ninguna otra lámina reclama esas BU. La versión de plata .950 o .999 que la Monnaie de Paris vendía aparte tiene ficha propia y tampoco entra. Se imprime el anverso, que en Numista lleva el retrato o la escena en once de las catorce. Carlomagno, Descartes y Jean Monnet lo llevan en el reverso, y en su casilla saldrá la cara del valor.",
+  "updated_at": "2026-10-14",
+  "members": [
+    {
+      "id": "1984-marie-curie",
+      "label": "Marie Curie",
+      "year": 1984,
+      "numista_type_id": 27,
+      "numista_issue_ids": [
+        294
+      ]
+    },
+    {
+      "id": "1985-germinal",
+      "label": "Germinal",
+      "year": 1985,
+      "numista_type_id": 28,
+      "numista_issue_ids": [
+        295,
+        431451
+      ]
+    },
+    {
+      "id": "1986-estatua-de-la-libertad",
+      "label": "Estatua de la Libertad",
+      "year": 1986,
+      "numista_type_id": 29,
+      "numista_issue_ids": [
+        296,
+        443337
+      ]
+    },
+    {
+      "id": "1987-la-fayette",
+      "label": "La Fayette",
+      "year": 1987,
+      "numista_type_id": 30,
+      "numista_issue_ids": [
+        297,
+        278721
+      ]
+    },
+    {
+      "id": "1988-fraternidad",
+      "label": "Fraternidad",
+      "year": 1988,
+      "numista_type_id": 31,
+      "numista_issue_ids": [
+        298,
+        443339
+      ]
+    },
+    {
+      "id": "1989-derechos-del-hombre",
+      "label": "Derechos del Hombre",
+      "year": 1989,
+      "numista_type_id": 32
+    },
+    {
+      "id": "1990-carlomagno",
+      "label": "Carlomagno",
+      "year": 1990,
+      "numista_type_id": 33,
+      "numista_issue_ids": [
+        300
+      ]
+    },
+    {
+      "id": "1991-descartes",
+      "label": "Descartes",
+      "year": 1991,
+      "numista_type_id": 34,
+      "numista_issue_ids": [
+        301
+      ]
+    },
+    {
+      "id": "1992-jean-monnet",
+      "label": "Jean Monnet",
+      "year": 1992,
+      "numista_type_id": 35,
+      "numista_issue_ids": [
+        302
+      ]
+    },
+    {
+      "id": "1993-louvre",
+      "label": "Louvre",
+      "year": 1993,
+      "numista_type_id": 36,
+      "numista_issue_ids": [
+        303
+      ]
+    },
+    {
+      "id": "1994-liberacion-de-paris",
+      "label": "Liberación de París",
+      "year": 1994,
+      "numista_type_id": 37,
+      "numista_issue_ids": [
+        304
+      ]
+    },
+    {
+      "id": "1995-armisticio",
+      "label": "Armisticio de 1945",
+      "year": 1995,
+      "numista_type_id": 38,
+      "numista_issue_ids": [
+        305
+      ]
+    },
+    {
+      "id": "1996-clovis",
+      "label": "Clovis",
+      "year": 1996,
+      "numista_type_id": 39,
+      "numista_issue_ids": [
+        306,
+        931876
+      ]
+    },
+    {
+      "id": "1997-andre-malraux",
+      "label": "André Malraux",
+      "year": 1997,
+      "numista_type_id": 40,
+      "numista_issue_ids": [
+        307,
+        247078
+      ]
+    }
+  ]
+}
