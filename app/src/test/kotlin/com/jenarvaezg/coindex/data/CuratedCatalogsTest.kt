@@ -1382,8 +1382,8 @@ class CuratedCatalogsTest {
     /**
      * La proof coloreada repite tres tipos de la bullion entre 2021 y 2023 y se separa por emisión:
      * sin esos ids una proof llenaría la casilla de bullion, o al revés. Las demás casillas también
-     * los declaran, por otros acabados del mismo tipo. La de 2027 declara sólo la emisión del
-     * estuche de tres de 1 oz, la única de la ficha al curarla; la suelta añadirá otra.
+     * los declaran, por otros acabados del mismo tipo. La de 2027 declara la suelta y la del estuche
+     * de tres de 1 oz.
      */
     @Test
     fun `lunar iii proof coloured is issue qualified from 2020 to 2027`() {
@@ -1408,7 +1408,7 @@ class CuratedCatalogsTest {
                 listOf(833_480),
                 listOf(1_088_982, 1_091_660),
                 listOf(1_002_105),
-                listOf(1_123_374),
+                listOf(1_123_374, 1_131_325),
             ),
             proofColoured.members.map { it.numistaIssueIds },
         )
