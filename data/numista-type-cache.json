@@ -111808,6 +111808,97 @@
   "category": "coin",
   "type": "Monedas no circulantes"
  },
+ "606988": {
+  "id": 606988,
+  "url": "https://es.numista.com/606988",
+  "title": "50 Francs (Year of the Goat)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "rwanda",
+   "name": "Ruanda"
+  },
+  "issuing_entity": {
+   "id": 938,
+   "name": "Banco Nacional de Ruanda",
+   "wikidata_id": "Q4314980"
+  },
+  "min_year": 2027,
+  "max_year": 2027,
+  "ruler": [
+   {
+    "id": 1431,
+    "name": "República",
+    "wikidata_id": "Q1037"
+   }
+  ],
+  "value": {
+   "text": "50 Francs",
+   "numeric_value": 50,
+   "currency": {
+    "id": 81,
+    "name": "Franc",
+    "full_name": "Franc (1964-date)"
+   }
+  },
+  "size": 40,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "description": "Escudo sobre valor",
+   "lettering": "BANKI NKURU Y'U RWANDA\r\nREPUBLIKA Y'U RWANDA\r\nUBUMWE-UMURIMO-GUKUNDA-IGIHUGU\r\nAMAFARANGA 50 MIRONGO ITANU",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6ace2d053d7a97.37331101-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6ace2d053d7a97.37331101-180.jpg",
+   "picture_copyright": "Aurinum",
+   "picture_copyright_url": "https://www.aurinum.de/"
+  },
+  "reverse": {
+   "description": "(en) Stylised goat in mosaic style at centre; Chinese character for goat in an octagonal frame at top; \"YEAR OF THE GOAT\" in a cartouche at left; date at upper right; weight and fineness at right.",
+   "lettering": "LUNAR OUNCE 羊 2027\r\nYEAR OF THE GOAT\r\n1oz FINE SILVER 999",
+   "lettering_scripts": [
+    {
+     "name": "China"
+    },
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/rwanda/6ace2d05bae685.73362215-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/rwanda/6ace2d05bae685.73362215-180.jpg",
+   "picture_copyright": "Aurinum",
+   "picture_copyright_url": "https://www.aurinum.de/"
+  },
+  "series": "Lunar ounce",
+  "commemorated_topic": "Año de la Cabra",
+  "tags": [
+   "Cabra o caprino",
+   "Calendario chino"
+  ],
+  "weight": 31.103,
+  "edge": {
+   "description": "Reed."
+  },
+  "mints": [
+   {
+    "id": 1852,
+    "name": "B. H. Mayer Kunstprageanstalt"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
+ },
  "607068": {
   "id": 607068,
   "url": "https://es.numista.com/607068",
@@ -112759,6 +112850,118 @@
    "text": "2,50 escudos"
   },
   "weight": 3.5
+ },
+ "607830": {
+  "id": 607830,
+  "url": "https://es.numista.com/607830",
+  "title": "2 Pounds - Charles III (Frankenstein; 1oz Fine Silver)",
+  "object_type": {
+   "id": 3,
+   "name": "Monedas no circulantes"
+  },
+  "issuer": {
+   "code": "royaume-uni",
+   "name": "Reino Unido"
+  },
+  "min_year": 2026,
+  "max_year": 2026,
+  "ruler": [
+   {
+    "id": 6814,
+    "name": "Carlos III",
+    "wikidata_id": "Q43274",
+    "group": {
+     "id": 527,
+     "name": "Casa de Windsor"
+    }
+   }
+  ],
+  "value": {
+   "text": "2 libras",
+   "numeric_value": 2,
+   "currency": {
+    "id": 126,
+    "name": "Pound sterling",
+    "full_name": "Pound sterling (decimalized, 1971-date)"
+   }
+  },
+  "issue_terms": {
+   "is_issued": true,
+   "issue_date": "2026-10-08"
+  },
+  "demonetization": {
+   "is_demonetized": false
+  },
+  "size": 38.61,
+  "shape": "Circular",
+  "composition": {
+   "text": "Plata 999"
+  },
+  "technique": {
+   "text": "Acuñación a máquina"
+  },
+  "obverse": {
+   "designers": [
+    "Martin Jennings"
+   ],
+   "description": "Retrato sin corona del rey Carlos III a la izquierda, leyenda y fecha alrededor.",
+   "lettering": "CHARLES III·D·G·REX·F·D·2 POUNDS ·\r\nMJ",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "unabridged_legend": "Charles III Dei Gratia Rex Fidei Defensor",
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6ad5b9b51d8127.59749039-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6ad5b9b51d8127.59749039-180.jpg",
+   "picture_copyright": "The Royal Mint, 2026"
+  },
+  "reverse": {
+   "designers": [
+    "William Webb"
+   ],
+   "description": "(en) Frankenstein surrounded by lightning bolts, surrounded by inscriptions.",
+   "lettering": "FRANKENSTEIN'S MONSTER 1oz 999 FINE SILVER\r\nWW\r\n2026",
+   "lettering_scripts": [
+    {
+     "name": "Latina"
+    }
+   ],
+   "picture": "https://en.numista.com/catalogue/photos/royaume-uni/6ad5b9b5edc8d3.45215969-original.jpg",
+   "thumbnail": "https://en.numista.com/catalogue/photos/royaume-uni/6ad5b9b5edc8d3.45215969-180.jpg",
+   "picture_copyright": "The Royal Mint, 2026"
+  },
+  "series": "Gothic Horror",
+  "comments": "(en) <p>Issued individually. Also issued as a gold bullion coin. Issue limit: 50,000.</p>",
+  "related_types": [
+   {
+    "id": 607831,
+    "title": "100 Pounds - Charles III (Frankenstein; 1oz Fine Gold)",
+    "category": "coin",
+    "country": {
+     "code": "royaume-uni",
+     "name": "Reino Unido"
+    },
+    "minYear": 2026,
+    "maxYear": 2026
+   }
+  ],
+  "tags": [
+   "Literatura"
+  ],
+  "weight": 31.21,
+  "orientation": "medal",
+  "edge": {
+   "description": "Fresado"
+  },
+  "mints": [
+   {
+    "id": 16,
+    "name": "Royal Mint"
+   }
+  ],
+  "category": "coin",
+  "type": "Monedas no circulantes"
  },
  "60991": {
   "id": 60991,

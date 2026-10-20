@@ -10,7 +10,7 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/pieces295025.html",
-  "updated_at": "2026-10-13",
+  "updated_at": "2026-10-20",
   "members": [
     {
       "id": "2013-silver-britannia",
@@ -164,9 +164,10 @@
       "id": "2027-silver-britannia",
       "label": "Silver Britannia · 30th Anniversary",
       "year": 2027,
-      "status": "unlisted",
-      "source": "https://www.royalmint.com/britannia/bullion/britannia-coins/britannia-2027-1oz-silver-bullion-coin/",
-      "source_note": "A la venta en la Royal Mint el 13 de octubre de 2026 (BB27S1C): 2 libras, plata 999, 38,61 mm, bullion, «Year 2027». Sólo ese año lleva un privy de ola con un «30» y el fondo texturado por los 30 años de la Britannia de plata («Only for 2027, our Britannia bullion coins feature a special wave privy mark and numbered background texture»), así que no hay versión lisa. N#353110 llega a 2026 y Numista no tiene otro tipo de 2027."
+      "numista_type_id": 353110,
+      "numista_issue_ids": [
+        1132561
+      ]
     }
   ]
 }
