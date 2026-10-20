@@ -767,8 +767,8 @@ class CuratedCatalogsTest {
             open999.members.groupBy { it.year }.filterValues { it.size > 1 }.keys.toList(),
         )
         assertTrue(open999.members.filter { it.isIssued }.all { it.numistaIssueIds.isNotEmpty() })
-        // 2027 is on sale with the «30» privy and Numista has no row for it yet.
-        assertTrue(open999.members.single { it.year == 2027 }.isUnlisted)
+        // 2027 lleva el privy «30» y es otro renglón del mismo tipo.
+        assertEquals(listOf(1_132_561), open999.members.single { it.year == 2027 }.numistaIssueIds)
         // Textured bullion is the 2015/2016 standard; plain-field BU must not fill.
         assertTrue(555_707 in open999.members.single { it.year == 2015 }.numistaIssueIds)
         assertTrue(open999.members.none { 254_785 in it.numistaIssueIds })
@@ -811,7 +811,7 @@ class CuratedCatalogsTest {
         // Ésta sí tiene huecos, y son la afirmación: los años en que Numista sólo lista proof.
         assertEquals(2013, quarter.members.mapNotNull { it.year }.min())
         assertTrue(quarter.members.filter { it.isIssued }.all { it.numistaIssueIds.isNotEmpty() })
-        assertTrue(quarter.members.single { it.year == 2027 }.isUnlisted)
+        assertEquals(listOf(1_132_613), quarter.members.single { it.year == 2027 }.numistaIssueIds)
         assertTrue(quarter.members.none { 726_963 in it.numistaIssueIds }) // Gairsoppa
         assertTrue(quarter.members.none { it.year in 2016..2020 })
         assertTrue(quarter.members.none { it.year == 2022 })
@@ -1264,6 +1264,7 @@ class CuratedCatalogsTest {
         val snake = rwanda.members.single { it.year == 2025 }
         assertEquals("Year of the Snake", snake.label)
         assertEquals(448_800, snake.numistaTypeId)
+        assertEquals(606_988, rwanda.members.single { it.year == 2027 }.numistaTypeId)
     }
 
     @Test

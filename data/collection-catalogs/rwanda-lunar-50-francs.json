@@ -10,7 +10,7 @@
   "metal": "silver",
   "series_status": "open",
   "source": "https://en.numista.com/catalogue/series.php?id=4744",
-  "updated_at": "2026-10-13",
+  "updated_at": "2026-10-20",
   "members": [
     {
       "id": "2017-year-of-the-rooster",
@@ -76,9 +76,7 @@
       "id": "2027-year-of-the-goat",
       "label": "Year of the Goat",
       "year": 2027,
-      "status": "unlisted",
-      "source": "https://www.silbertresor.de/product_info.php?info=p18474",
-      "source_note": "Silbertresor la tiene en catálogo desde el 21 de julio de 2026: «Die 2027 Ausgabe der Ruanda Lunar Ounce zeigt das Jahr der Ziege», plata 999, 31,103 g, 40 mm, BU y tirada ilimitada que se acuña hasta el final de 2027. Es la undécima de la serie, que empezó con el gallo de 2017. Sin ficha en Numista el 13 de octubre de 2026."
+      "numista_type_id": 606988
     }
   ]
 }
